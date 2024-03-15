@@ -9,7 +9,6 @@ struct Matrix_float {
 	int height;
 	float* data;
 };
-uint8_t HIP_AVAILABLE;
 struct Matrix_float; 
 struct Matrix_int;
 typedef struct Matrix_int Matrix_I_t;

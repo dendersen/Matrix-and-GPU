@@ -21,6 +21,9 @@
     <ClCompile Include="Source.hip">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Matrix.h">

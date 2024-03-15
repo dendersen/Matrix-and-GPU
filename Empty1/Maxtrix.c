@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Matrix.h"
-#include  "Source.hip"
+#include "Source.h"
+#include <hip/hip_runtime.h>
+
 
 #define MatrixRead(Matrix, x, y) Matrix->data[x + y * Matrix->width]
 
@@ -290,20 +292,21 @@ static int MatrixDescriminant_I (Matrix_I_t* in, int depth) {
 	}
 }
 
-
-/*
-* @return &1 is hip available
-*/
+uint8_t HIP_AVAILABLE = 0;
 static int init () {
 	uint8_t response = 0;
-	hipDeviceProp_t devProp;
-    hipError_t i = hipGetDeviceProperties(&devProp, 0);
-	if(i != hipSuccess) {
+	hipError_t i;
+	int j;
+	try {
+		i = hipGetDeviceCount(&j);
+	} catch(const std::exception& e) {
+		i = hipErrorLaunchFailure;
+	}
+	if(i != hipSuccess || j < 1) {
 		response |= 1;
 		HIP_AVAILABLE = 0;
 	} else {
 		HIP_AVAILABLE = 1;
-		printf(devProp.name);
 	}
 }
 

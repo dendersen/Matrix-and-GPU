@@ -2,7 +2,7 @@
 #include <hip/hip_runtime.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "matrix.h"
+#include "source.h"
 
 #define HIP_CHECK(status)                                                                                     \
     if (status != hipSuccess) {                                                                               \
@@ -10,8 +10,13 @@
         exit(0);                                                                                              \
     }
 
+extern uint8_t HIP_AVAILABLE;
 
-__global__ void __GPU_Matrix_I_Add(int* a, int* b, int* target, uint32_t width, uint32_t height);
+__global__ void __GPU_Matrix_I_Add(int* a, int* b, int* target, uint32_t width, uint32_t height) {
+	uint32_t x = blockIdx.x * blockDim.x + threadIdx.x;
+	uint32_t y = blockIdx.y * blockDim.y + threadIdx.y;
+	target[y * width + x] = a[y * width + x] + b[y * width + x];
+}
 
 static Matrix_I_t* MatrixAdd_I_gpu(Matrix_I_t* a, Matrix_I_t* b) {
     if(!HIP_AVAILABLE) return MatrixAdd_I(a, b);
@@ -47,10 +52,4 @@ static Matrix_I_t* MatrixAdd_I_gpu(Matrix_I_t* a, Matrix_I_t* b) {
     HIP_CHECK(hipFree(matrixB));
 
     return result;
-}
-
-__global__ void __GPU_Matrix_I_Add(int* a, int* b, int* target, uint32_t width, uint32_t height) {
-	uint32_t x = blockIdx.x * blockDim.x + threadIdx.x;
-	uint32_t y = blockIdx.y * blockDim.y + threadIdx.y;
-	target[y * width + x] = a[y * width + x] + b[y * width + x];
 }
